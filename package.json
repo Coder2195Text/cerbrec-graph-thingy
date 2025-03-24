@@ -1,4 +1,10 @@
 {
   "name": "graph-cleaner",
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.6.0",
+  "devDependencies": {
+    "parcel": "^2.13.3"
+  },
+  "dependencies": {
+    "@parcel/core": "^2.13.3"
+  }
 }
