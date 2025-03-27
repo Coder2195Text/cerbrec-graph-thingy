@@ -730,10 +730,21 @@ const gaps = grid.map((column, i)=>{
     return gaps;
 });
 function calculate_y(op, current_input) {
-    return op.position.y + current_input * 50 + 75;
+    return calcuate_y_raw(op.position.y, current_input);
+}
+function calcuate_y_raw(y, current_input) {
+    return y + current_input * 50 + 75;
 }
 column_lookup["global_input"] = -1;
 delete column_lookup["global_output"];
+for(let i = 0; i < grid[0].length; i++){
+    const op = grid[0][i].op;
+    if (!op || op.name == "global_input" || op.name == "global_output" || op.name == "this") {
+        console.log("hit global");
+        continue;
+    }
+    op.position.y -= GAP_SIZE;
+}
 for (const linkRaw of composite.links){
     let source_op_name = linkRaw.source.operation == "this" ? "global_input" : linkRaw.source.operation;
     let sink_op_name = linkRaw.sink.operation == "this" ? "global_output" : linkRaw.sink.operation;
@@ -769,7 +780,7 @@ for (const linkRaw of composite.links){
         },
         {
             x: from_op.position.x + 1.5 * GAP_SIZE,
-            y: calculate_y(to_op, inIndex)
+            y: to_op.name == "global_output" ? calcuate_y_raw(0, inIndex) : calculate_y(to_op, inIndex)
         }
     ];
 }
