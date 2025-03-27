@@ -1,4 +1,4 @@
-import { Link, Operation } from "./composite";
+import { Link, Operation } from "./types";
 import { example } from "./example";
 
 
@@ -31,9 +31,10 @@ const nodes: { [key: string]: Node } = {
     op: {
       position: { x: 0, y: 0 },
       name: "global_input",
-      inputs: composite.inputs.map(input => ({ ...input, flow_state: "" })) as any,
-      outputs: composite.inputs.map(input => ({ ...input, flow_state: "" }))
-    } as any
+      inputs: composite.inputs,
+      outputs: composite.inputs,
+      type: "PRIMITIVE_OPERATION"
+    }
   },
   global_output: {
     id: "global_output",
@@ -42,9 +43,10 @@ const nodes: { [key: string]: Node } = {
     op: {
       position: { x: 0, y: 0 },
       name: "global_output",
-      inputs: composite.outputs.map(input => ({ ...input, flow_state: "" })),
-      outputs: composite.outputs.map(input => ({ ...input, flow_state: "" }))
-    } as any
+      inputs: composite.outputs,
+      outputs: composite.outputs,
+      type: "PRIMITIVE_OPERATION"
+    }
   }
 };
 
@@ -57,7 +59,7 @@ function height(op: Operation) {
 let visited: { [key: string]: boolean } = {};
 
 // first pass add nodes
-for (const op of composite.operations) {
+for (const op of composite.operations || []) {
   let operation = op as Operation;
   operation.position = {
     x: 0,
@@ -74,7 +76,7 @@ for (const op of composite.operations) {
 
 
 // second pass, link together
-for (const link of composite.links) {
+for (const link of composite.links || []) {
   const parent = nodes[link.source.operation == "this" ? "global_input" : link.source.operation]
   const child = nodes[link.sink.operation == "this" ? "global_output" : link.sink.operation]
   if (!parent.children.includes(child)) parent.children.push(child);
@@ -125,8 +127,8 @@ while (root_nodes.length) {
     grid[column][i] = n;
     column_lookup[n.id] = column;
     if (n.op) {
-      n.op.position.x = GAP_SIZE * (2 * column + 1);
-      n.op.position.y = current_y;
+      n.op.position!.x = GAP_SIZE * (2 * column + 1);
+      n.op.position!.y = current_y;
       current_y += height(n.op) + GAP_SIZE;
     }
 
@@ -152,13 +154,13 @@ const gaps: [number, number][][] = grid.map((column, i) => {
     if (!node.op) continue;
 
 
-    gaps.push([node.op.position.y + height(node.op) + GAP_SIZE / 2, next_node?.op ? next_node.op.position.y : 1000000]);
+    gaps.push([node.op.position!.y + height(node.op) + GAP_SIZE / 2, next_node?.op ? next_node.op.position!.y : 1000000]);
   }
   return gaps;
 });
 
 function calculate_y(op: Operation, current_input: number) {
-  return calcuate_y_raw(op.position.y, current_input);
+  return calcuate_y_raw(op.position!.y, current_input);
 }
 
 function calcuate_y_raw(y: number, current_input: number) {
@@ -175,12 +177,12 @@ for (let i = 0; i < grid[0].length; i++) {
     console.log("hit global")
     continue;
   }
-  op.position.y -= GAP_SIZE;
+  op.position!.y -= GAP_SIZE;
 }
 
 
 
-for (const linkRaw of composite.links) {
+for (const linkRaw of composite.links || []) {
   let source_op_name = linkRaw.source.operation == "this" ? "global_input" : linkRaw.source.operation;
   let sink_op_name = linkRaw.sink.operation == "this" ? "global_output" : linkRaw.sink.operation;
   const link = linkRaw as Link;
@@ -216,13 +218,11 @@ for (const linkRaw of composite.links) {
   console.assert(outIndex !== -1, outIndex, link)
   // console.log(linkRaw)
 
-  // find closest gap`
-  // @ts-ignore
   linkRaw.control_points = [{
-    x: from_op.position.x + 1.5 * GAP_SIZE,
+    x: from_op.position!.x + 1.5 * GAP_SIZE,
     y: current_y
   }, {
-    x: from_op.position.x + 1.5 * GAP_SIZE,
+    x: from_op.position!.x + 1.5 * GAP_SIZE,
     y: to_op.name == "global_output" ? calcuate_y_raw(0, inIndex) : calculate_y(to_op, inIndex)
   }]
 

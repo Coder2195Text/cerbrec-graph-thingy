@@ -1,4 +1,6 @@
-export const example = {
+import { Composite } from "./types";
+
+export const example: Composite = {
     "name": "Composite_8311840b",
     "type": "COMPOSITE_OPERATION",
     "inputs": [
