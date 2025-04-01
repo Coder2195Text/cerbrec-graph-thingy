@@ -596,202 +596,197 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"gg0zR":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "organize", ()=>organize);
+var _jeffy = require("./jeffy");
 var _example = require("./example");
 /**
 * THIS ALGORITHM WILL NOT WORK FOR CYCLIC GRAPHS!!!
-  */ const composite = (0, _example.example);
-const GAP_SIZE = 325;
+  */ const GAP_SIZE = 325;
 function interleave(arr, thing) {
     return [].concat(...arr.map((n)=>[
             n,
             thing
         ])).slice(0, -1);
 }
-const nodes = {
-    "global_input": {
-        id: "global_input",
-        children: [],
-        parents: [],
-        op: {
-            position: {
-                x: 0,
-                y: 0
-            },
-            name: "global_input",
-            inputs: composite.inputs.map((input)=>({
-                    ...input,
-                    flow_state: ""
-                })),
-            outputs: composite.inputs.map((input)=>({
-                    ...input,
-                    flow_state: ""
-                }))
-        }
-    },
-    global_output: {
-        id: "global_output",
-        children: [],
-        parents: [],
-        op: {
-            position: {
-                x: 0,
-                y: 0
-            },
-            name: "global_output",
-            inputs: composite.outputs.map((input)=>({
-                    ...input,
-                    flow_state: ""
-                })),
-            outputs: composite.outputs.map((input)=>({
-                    ...input,
-                    flow_state: ""
-                }))
-        }
-    }
-};
-function height(op) {
-    return (Math.max(op.inputs.length, op.outputs.length) + 1) * 50;
-}
-let visited = {};
-// first pass add nodes
-for (const op of composite.operations){
-    let operation = op;
-    operation.position = {
-        x: 0,
-        y: 0
-    };
-    nodes[operation.name] = {
-        id: operation.name,
-        children: [],
-        parents: [],
-        op: operation
-    };
-}
-// second pass, link together
-for (const link of composite.links){
-    const parent = nodes[link.source.operation == "this" ? "global_input" : link.source.operation];
-    const child = nodes[link.sink.operation == "this" ? "global_output" : link.sink.operation];
-    if (!parent.children.includes(child)) parent.children.push(child);
-    if (!child.parents.includes(parent)) child.parents.push(parent);
-}
-const node_array = Object.values(nodes);
-const roots = node_array.filter((node)=>node.parents.length == 0);
-const COLUMNS = Math.max(...roots.map((root)=>{
-    visited = {};
-    return depth(root);
-})) + 1;
-function depth(node) {
-    if (visited[node.id]) return 0;
-    else visited[node.id] = true;
-    if (node.children.length === 0) return 0;
-    return Math.max(...node.children.map(depth)) + 1;
-}
-const grid = new Array(COLUMNS);
-for(let i = 0; i < COLUMNS; i++)grid[i] = [];
-// start with the ends
-let root_nodes = roots;
-let column = 0;
-visited = {};
-let column_lookup = {};
-while(root_nodes.length){
-    let current_y = 0;
-    let new_roots = [];
-    for(let i = 0; i < root_nodes.length; i++){
-        const n = root_nodes[i];
-        visited[n.id] = true;
-        grid[column][i] = n;
-        column_lookup[n.id] = column;
-        if (n.op) {
-            n.op.position.x = GAP_SIZE * (2 * column + 1);
-            n.op.position.y = current_y;
-            current_y += height(n.op) + GAP_SIZE;
-        }
-        new_roots.push(...n.children.filter((child)=>child.parents.every((parent)=>visited[parent.id])));
-    }
-    root_nodes = new_roots;
-    // console.log(new_roots, "new roots", column);
-    column++;
-}
-grid[0] = grid[0].filter((n)=>n.id != "global_input");
-// TODO: arange the node links nicely;
-//
-//
-const gaps = grid.map((column, i)=>{
-    const gaps = [];
-    for(let j = 0; j < column.length; j++){
-        const node = column[j];
-        const next_node = column[j + 1];
-        if (!node.op) continue;
-        gaps.push([
-            node.op.position.y + height(node.op) + GAP_SIZE / 2,
-            next_node?.op ? next_node.op.position.y : 1000000
-        ]);
-    }
-    return gaps;
-});
-function calculate_y(op, current_input) {
-    return calcuate_y_raw(op.position.y, current_input);
-}
-function calcuate_y_raw(y, current_input) {
-    return y + current_input * 50 + 75;
-}
-column_lookup["global_input"] = -1;
-delete column_lookup["global_output"];
-for(let i = 0; i < grid[0].length; i++){
-    const op = grid[0][i].op;
-    if (!op || op.name == "global_input" || op.name == "global_output" || op.name == "this") {
-        console.log("hit global");
-        continue;
-    }
-    op.position.y -= GAP_SIZE;
-}
-for (const linkRaw of composite.links){
-    let source_op_name = linkRaw.source.operation == "this" ? "global_input" : linkRaw.source.operation;
-    let sink_op_name = linkRaw.sink.operation == "this" ? "global_output" : linkRaw.sink.operation;
-    const link = linkRaw;
-    let col_from = column_lookup[source_op_name];
-    let col_to = column_lookup[sink_op_name];
-    // if (Math.abs(col_to - col_from) <= 1) continue;
-    link.control_points = [];
-    let from_op = nodes[source_op_name].op;
-    // get index of the beginning of the wire
-    let outIndex = -1;
-    for(let i = 0; i < from_op.outputs.length; i++)if (from_op.outputs[i].name == link.source.data) {
-        outIndex = i;
-        break;
-    }
-    if (outIndex == -1) console.log("error", from_op.outputs, link.source.data);
-    let current_y = calculate_y(from_op, outIndex);
-    let to_op = nodes[sink_op_name].op;
-    //get index of end of the wire
-    let inIndex = -1;
-    for(let i = 0; i < to_op.inputs.length; i++)if (to_op.inputs[i].name == link.sink.data) {
-        inIndex = i;
-        break;
-    }
-    console.assert(outIndex !== -1, outIndex, link);
-    // console.log(linkRaw)
-    // find closest gap`
-    // @ts-ignore
-    linkRaw.control_points = [
-        {
-            x: from_op.position.x + 1.5 * GAP_SIZE,
-            y: current_y
+function organize(composite) {
+    const nodes = {
+        "global_input": {
+            id: "global_input",
+            children: [],
+            parents: [],
+            op: {
+                position: {
+                    x: 0,
+                    y: 0
+                },
+                name: "global_input",
+                inputs: composite.inputs,
+                outputs: composite.inputs,
+                type: "PRIMITIVE_OPERATION"
+            }
         },
-        {
-            x: from_op.position.x + 1.5 * GAP_SIZE,
-            y: to_op.name == "global_output" ? calcuate_y_raw(0, inIndex) : calculate_y(to_op, inIndex)
+        global_output: {
+            id: "global_output",
+            children: [],
+            parents: [],
+            op: {
+                position: {
+                    x: 0,
+                    y: 0
+                },
+                name: "global_output",
+                inputs: composite.outputs,
+                outputs: composite.outputs,
+                type: "PRIMITIVE_OPERATION"
+            }
         }
-    ];
+    };
+    function height(op) {
+        return (Math.max(op.inputs.length, op.outputs.length) + 1) * 50;
+    }
+    let visited = {};
+    // first pass add nodes
+    for (const op of composite.operations || []){
+        let operation = op;
+        operation.position = {
+            x: 0,
+            y: 0
+        };
+        nodes[operation.name] = {
+            id: operation.name,
+            children: [],
+            parents: [],
+            op: operation
+        };
+    }
+    // second pass, link together
+    for (const link of composite.links || []){
+        const parent = nodes[link.source.operation == "this" ? "global_input" : link.source.operation];
+        const child = nodes[link.sink.operation == "this" ? "global_output" : link.sink.operation];
+        if (!parent.children.includes(child)) parent.children.push(child);
+        if (!child.parents.includes(parent)) child.parents.push(parent);
+    }
+    const node_array = Object.values(nodes);
+    const roots = node_array.filter((node)=>node.parents.length == 0);
+    const COLUMNS = Math.max(...roots.map((root)=>{
+        visited = {};
+        return depth(root);
+    })) + 1;
+    function depth(node) {
+        if (visited[node.id]) return 0;
+        else visited[node.id] = true;
+        if (node.children.length === 0) return 0;
+        return Math.max(...node.children.map(depth)) + 1;
+    }
+    const grid = new Array(COLUMNS);
+    for(let i = 0; i < COLUMNS; i++)grid[i] = [];
+    // start with the ends
+    let root_nodes = roots;
+    let column = 0;
+    visited = {};
+    let column_lookup = {};
+    while(root_nodes.length){
+        let current_y = 0;
+        let new_roots = [];
+        for(let i = 0; i < root_nodes.length; i++){
+            const n = root_nodes[i];
+            visited[n.id] = true;
+            grid[column][i] = n;
+            column_lookup[n.id] = column;
+            if (n.op) {
+                n.op.position.x = GAP_SIZE * (2 * column + 1);
+                n.op.position.y = current_y;
+                current_y += height(n.op) + GAP_SIZE;
+            }
+            new_roots.push(...n.children.filter((child)=>child.parents.every((parent)=>visited[parent.id])));
+        }
+        root_nodes = new_roots;
+        // console.log(new_roots, "new roots", column);
+        column++;
+    }
+    grid[0] = grid[0].filter((n)=>n.id != "global_input");
+    // TODO: arange the node links nicely;
+    //
+    //
+    const gaps = grid.map((column, i)=>{
+        const gaps = [];
+        for(let j = 0; j < column.length; j++){
+            const node = column[j];
+            const next_node = column[j + 1];
+            if (!node.op) continue;
+            gaps.push([
+                node.op.position.y + height(node.op) + GAP_SIZE / 2,
+                next_node?.op ? next_node.op.position.y : 1000000
+            ]);
+        }
+        return gaps;
+    });
+    function calculate_y(op, current_input) {
+        return calcuate_y_raw(op.position.y, current_input);
+    }
+    function calcuate_y_raw(y, current_input) {
+        return y + current_input * 50 + 75;
+    }
+    column_lookup["global_input"] = -1;
+    delete column_lookup["global_output"];
+    for(let i = 0; i < grid[0].length; i++){
+        const op = grid[0][i].op;
+        if (!op || op.name == "global_input" || op.name == "global_output" || op.name == "this") {
+            console.log("hit global");
+            continue;
+        }
+        op.position.y -= GAP_SIZE;
+    }
+    for (const linkRaw of composite.links || []){
+        let source_op_name = linkRaw.source.operation == "this" ? "global_input" : linkRaw.source.operation;
+        let sink_op_name = linkRaw.sink.operation == "this" ? "global_output" : linkRaw.sink.operation;
+        const link = linkRaw;
+        let col_from = column_lookup[source_op_name];
+        let col_to = column_lookup[sink_op_name];
+        // if (Math.abs(col_to - col_from) <= 1) continue;
+        link.control_points = [];
+        let from_op = nodes[source_op_name].op;
+        // get index of the beginning of the wire
+        let outIndex = -1;
+        for(let i = 0; i < from_op.outputs.length; i++)if (from_op.outputs[i].name == link.source.data) {
+            outIndex = i;
+            break;
+        }
+        if (outIndex == -1) console.log("error", from_op.outputs, link.source.data);
+        let current_y = calculate_y(from_op, outIndex);
+        let to_op = nodes[sink_op_name].op;
+        //get index of end of the wire
+        let inIndex = -1;
+        for(let i = 0; i < to_op.inputs.length; i++)if (to_op.inputs[i].name == link.sink.data) {
+            inIndex = i;
+            break;
+        }
+        console.assert(outIndex !== -1, outIndex, link);
+        // console.log(linkRaw)
+        linkRaw.control_points = [
+            {
+                x: from_op.position.x + 1.5 * GAP_SIZE,
+                y: current_y
+            },
+            {
+                x: from_op.position.x + 1.5 * GAP_SIZE,
+                y: to_op.name == "global_output" ? calcuate_y_raw(0, inIndex) : calculate_y(to_op, inIndex)
+            }
+        ];
+    }
+    console.log(nodes["global_input"]);
+    // console.log(nodes);
+    //
+    console.log(nodes);
+    console.log(gaps);
+    console.log(composite);
+    return composite;
 }
-console.log(nodes["global_input"]);
-// console.log(nodes);
-//
-console.log(nodes);
-console.log(gaps);
-console.log(composite);
+organize((0, _example.example));
 
-},{"./example":"dPYp5"}],"dPYp5":[function(require,module,exports,__globalThis) {
+},{"./example":"dPYp5","./jeffy":"eBQxv","@parcel/transformer-js/src/esmodule-helpers.js":"2lomK"}],"dPYp5":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "example", ()=>example);
@@ -2109,6 +2104,175 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}]},["G6Eml","gg0zR"], "gg0zR", "parcelRequire94c2")
+},{}],"eBQxv":[function(require,module,exports,__globalThis) {
+var _scriptTs = require("./script.ts");
+const body = document.querySelector("body");
+let tables = document.querySelectorAll(".draggable-table");
+let tablePositions = [];
+let isDraggingBackground = false;
+let isDraggingTable = null;
+let startX, startY;
+let bgPosX = 0, bgPosY = 0;
+let inputGraph;
+let operations = [];
+let xPosRandIncrement = 400;
+let yPosRandIncrement = 400;
+//press, xPos and yPos of bg at start
+body.addEventListener("mousedown", (e)=>{
+    if (!e.target.classList.contains("draggable-table")) {
+        isDraggingBackground = true;
+        startX = e.clientX;
+        startY = e.clientY;
+    }
+});
+//mouse movement
+document.addEventListener("mousemove", (e)=>{
+    if (isDraggingTable) {
+        const newLeft = e.clientX - startX;
+        const newTop = e.clientY - startY;
+        isDraggingTable.style.left = `${newLeft}px`;
+        isDraggingTable.style.top = `${newTop}px`;
+    } else if (isDraggingBackground) {
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        bgPosX += deltaX;
+        bgPosY += deltaY;
+        body.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
+        tablePositions.forEach(({ element, relativeLeft, relativeTop })=>{
+            element.style.left = `${relativeLeft + bgPosX}px`;
+            element.style.top = `${relativeTop + bgPosY}px`;
+        });
+        startX = e.clientX;
+        startY = e.clientY;
+    }
+});
+//release
+document.addEventListener("mouseup", ()=>{
+    isDraggingBackground = false;
+    if (isDraggingTable) isDraggingTable = null;
+});
+//Obtain object from last inputted json inputted json
+document.getElementById("inputFile").addEventListener("change", function(event) {
+    const file = event.target.files[event.target.files.length - 1];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fileContent = e.target.result;
+            try {
+                inputGraph = JSON.parse(fileContent);
+                createDivs();
+            } catch (error) {
+                console.error("Error parsing JSON:", error);
+            }
+        };
+        reader.readAsText(file); //reads file and adds to assigns to inputGraph
+    } else console.log("No file was selected.");
+});
+//sending operations from obj into div
+let createDivs = ()=>{
+    let operations = Array.from(inputGraph.operations);
+    operations.forEach((o)=>{
+        const mainOperation = document.createElement("div");
+        const name = document.createElement("div");
+        const inputOutputContainer = document.createElement("div"); // Fixed from createAttribute
+        const inputs = document.createElement("div");
+        const outputs = document.createElement("div");
+        let numInputs = o.inputs.length;
+        let numOutputs = o.outputs.length;
+        // Assign temporary x and y values for random graph visuals
+        if (!o?.position?.x && !o?.position?.y) {
+            o.position = {};
+            o.position.x = xPosRandIncrement;
+            o.position.y = yPosRandIncrement;
+            xPosRandIncrement += 300;
+            if (xPosRandIncrement > 1600) {
+                xPosRandIncrement = 400;
+                yPosRandIncrement += 300;
+            }
+        }
+        tablePositions.push({
+            element: mainOperation,
+            relativeLeft: parseInt(o.position.x),
+            relativeTop: parseInt(o.position.y)
+        });
+        // Creates the required input elements
+        for(let i = 0; i < numInputs; i++){
+            // Fixed loop condition
+            const input = document.createElement("label");
+            const name = document.createElement("div");
+            const temp = document.createElement("input");
+            name.innerText = o.inputs[i].name;
+            temp.setAttribute("type", "checkbox");
+            temp.setAttribute("data-id", `input${i + 1}`);
+            temp.classList.add("input-box");
+            input.append(temp);
+            input.append(name);
+            inputs.append(input);
+        }
+        for(let i = 0; i < numOutputs; i++){
+            // Fixed loop condition
+            const output = document.createElement("label");
+            const name = document.createElement("div");
+            const temp = document.createElement("input");
+            name.innerText = o.outputs[i].name;
+            temp.setAttribute("type", "checkbox");
+            temp.setAttribute("data-id", `input${i + 1}`);
+            temp.classList.add("input-box");
+            output.append(name);
+            output.append(temp);
+            outputs.append(output);
+        }
+        mainOperation.classList.add("draggable-table");
+        name.classList.add("name");
+        name.textContent = o.name;
+        inputOutputContainer.classList.add("inputOutputContainer");
+        inputs.classList.add("inputs");
+        outputs.classList.add("outputs");
+        //initial x and y positions before mouse click
+        mainOperation.style.left = `${o.position.x}px`;
+        mainOperation.style.top = `${o.position.y}px`;
+        inputOutputContainer.append(inputs);
+        inputOutputContainer.append(outputs);
+        mainOperation.append(name);
+        mainOperation.append(inputOutputContainer);
+        body.append(mainOperation);
+    });
+    initializeOperations();
+};
+//adds events to new operations
+let initializeOperations = ()=>{
+    tables = document.querySelectorAll(".draggable-table");
+    tables.forEach((table, index)=>{
+        table.addEventListener("mousedown", (e)=>{
+            console.log("table");
+            isDraggingTable = table;
+            startX = e.clientX - parseInt(window.getComputedStyle(table).left);
+            startY = e.clientY - parseInt(window.getComputedStyle(table).top);
+            e.stopPropagation(); //idk, doesn't work without this
+        });
+        //tables into objects and assigns starting relativeX and relativeY
+        table.addEventListener("mouseup", ()=>{
+            if (isDraggingTable) {
+                const currentLeft = parseInt(window.getComputedStyle(table).left);
+                const currentTop = parseInt(window.getComputedStyle(table).top);
+                tablePositions[index].relativeLeft = currentLeft - bgPosX;
+                tablePositions[index].relativeTop = currentTop - bgPosY;
+                isDraggingTable = null;
+            }
+        });
+    });
+};
+let resetFunction = ()=>{
+    document.querySelectorAll(".draggable-table").forEach((e)=>e.remove());
+    bgPosX = 0;
+    bgPosY = 0;
+    startX = 0;
+    startY = 0;
+    xPosRandIncrement = 400;
+    yPosRandIncrement = 400;
+};
+document.getElementById("reset").addEventListener("click", resetFunction);
+
+},{"./script.ts":"gg0zR"}]},["G6Eml","gg0zR"], "gg0zR", "parcelRequire94c2")
 
 //# sourceMappingURL=index.54632f9a.js.map

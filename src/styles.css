@@ -1,0 +1,107 @@
+body {
+  --d: 1.5px;
+  background: radial-gradient(circle at var(--d) var(--d),
+      #000 calc(var(--d) - 1px),
+      #0000 var(--d)) 0 0 / 20px 20px;
+
+  margin: 0;
+  height: 100vh;
+  padding: 2.5vh;
+  position: relative;
+  overflow: hidden;
+}
+
+#controls {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 10px;
+}
+
+/*table css*/
+.draggable-table {
+  z-index: 0;
+  border: solid 1px black;
+  border-radius: 10px;
+  width: 325px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.name {
+  max-height: 30px;
+  min-height: 30px;
+  background-color: cadetblue;
+  font-size: 25px;
+  padding: 10px;
+  font-weight: bold;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inputOutputContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: white;
+}
+
+.inputs,
+.outputs {
+  display: flex;
+  flex-direction: column;
+}
+
+/*each input/ouput checkbox */
+.inputs>*,
+.outputs>* {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  width: 140px;
+  margin: 5px;
+  height: 30px;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* reset button and prevent select for adding file*/
+.prevent-select {
+  user-select: none;
+  font-size: 1.2vw;
+
+}
+
+.reset {
+  float: right;
+  width: 10vw;
+  height: 6vh;
+  font-size: 1.2vw;
+  background-color: pink;
+  z-index: 1000;
+}
+
+.reset:active {
+  background-color: red;
+}
+
+#connectionSVG {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+  pointer-events: none;
+}
