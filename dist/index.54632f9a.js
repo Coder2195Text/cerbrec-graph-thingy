@@ -599,7 +599,7 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "organize", ()=>organize);
-var _jeffy = require("./jeffy");
+var _jeffyJs = require("./jeffy.js");
 var _example = require("./example");
 /**
 * THIS ALGORITHM WILL NOT WORK FOR CYCLIC GRAPHS!!!
@@ -786,7 +786,7 @@ function organize(composite) {
 }
 organize((0, _example.example));
 
-},{"./example":"dPYp5","./jeffy":"eBQxv","@parcel/transformer-js/src/esmodule-helpers.js":"2lomK"}],"dPYp5":[function(require,module,exports,__globalThis) {
+},{"./example":"dPYp5","./jeffy.js":"eBQxv","@parcel/transformer-js/src/esmodule-helpers.js":"2lomK"}],"dPYp5":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "example", ()=>example);
@@ -2106,17 +2106,22 @@ exports.export = function(dest, destName, get) {
 
 },{}],"eBQxv":[function(require,module,exports,__globalThis) {
 var _scriptTs = require("./script.ts");
+//import { organize } from "./script.ts"
 const body = document.querySelector("body");
 let tables = document.querySelectorAll(".draggable-table");
 let tablePositions = [];
 let isDraggingBackground = false;
 let isDraggingTable = null;
 let startX, startY;
-let bgPosX = 0, bgPosY = 0;
+let bgPosX = 0;
+let bgPosY = 0;
 let inputGraph;
 let operations = [];
 let xPosRandIncrement = 400;
 let yPosRandIncrement = 400;
+let checkBoxes = [];
+let checkBoxesPositions = [];
+const svgCanvas = document.getElementById("connectionSVG");
 //press, xPos and yPos of bg at start
 body.addEventListener("mousedown", (e)=>{
     if (!e.target.classList.contains("draggable-table")) {
@@ -2150,6 +2155,7 @@ document.addEventListener("mousemove", (e)=>{
 document.addEventListener("mouseup", ()=>{
     isDraggingBackground = false;
     if (isDraggingTable) isDraggingTable = null;
+    refresh();
 });
 //Obtain object from last inputted json inputted json
 document.getElementById("inputFile").addEventListener("change", function(event) {
@@ -2217,7 +2223,7 @@ let createDivs = ()=>{
             name.innerText = o.outputs[i].name;
             temp.setAttribute("type", "checkbox");
             temp.setAttribute("data-id", `input${i + 1}`);
-            temp.classList.add("input-box");
+            temp.classList.add("output-box");
             output.append(name);
             output.append(temp);
             outputs.append(output);
@@ -2238,13 +2244,14 @@ let createDivs = ()=>{
         body.append(mainOperation);
     });
     initializeOperations();
+    parseCheckBoxes();
+    addConnections();
 };
 //adds events to new operations
 let initializeOperations = ()=>{
     tables = document.querySelectorAll(".draggable-table");
     tables.forEach((table, index)=>{
         table.addEventListener("mousedown", (e)=>{
-            console.log("table");
             isDraggingTable = table;
             startX = e.clientX - parseInt(window.getComputedStyle(table).left);
             startY = e.clientY - parseInt(window.getComputedStyle(table).top);
@@ -2272,6 +2279,64 @@ let resetFunction = ()=>{
     yPosRandIncrement = 400;
 };
 document.getElementById("reset").addEventListener("click", resetFunction);
+let parseCheckBoxes = ()=>{
+    checkBoxes = document.querySelectorAll("input[type='checkbox']", "output[type='checkbox']"); //parses all input/output objects
+    checkBoxes.forEach((checkbox)=>{
+        //parses position of each parsed input/output
+        const rect = checkbox.getBoundingClientRect();
+        checkBoxesPositions.push({
+            x: rect.x,
+            y: rect.y,
+            data: checkbox.nextElementSibling ? checkbox.nextElementSibling.innerText : checkbox.previousElementSibling.innerText,
+            operation: checkbox.parentElement?.parentElement?.parentElement?.parentElement?.querySelector("div")?.textContent.trim()
+        });
+    });
+};
+//basic function to draw a line between two coordiantes
+let drawLine = (x1, y1, x2, y2)=>{
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", x1);
+    line.setAttribute("y1", y1);
+    line.setAttribute("x2", x2);
+    line.setAttribute("y2", y2);
+    line.setAttribute("stroke", "red");
+    line.setAttribute("stroke-width", "4");
+    svgCanvas.appendChild(line);
+};
+//draws all lines based on checkBoxesPositions and link arrays
+let addConnections = ()=>{
+    const links = inputGraph.links;
+    let posOne = [];
+    let posTwo = [];
+    //grabs rels of links from original array and coords of new array
+    links.forEach((l)=>{
+        checkBoxesPositions.forEach((box)=>{
+            console.log(box);
+            console.log(l);
+            if (box.data === l.sink.data && box.operation === l.sink.operation) {
+                posTwo = [
+                    box.x,
+                    box.y
+                ];
+                console.log(posTwo);
+            }
+            if (box.data === l.source.data && box.operation === l.source.operation) {
+                posOne = [
+                    box.x,
+                    box.y
+                ];
+                console.log(posOne);
+            }
+        });
+        drawLine(posOne[0], posOne[1], posTwo[0], posTwo[1]);
+    });
+};
+//refreshs lines
+let refresh = ()=>{
+    svgCanvas.innerHTML = "";
+    parseCheckBoxes();
+    addConnections();
+};
 
 },{"./script.ts":"gg0zR"}]},["G6Eml","gg0zR"], "gg0zR", "parcelRequire94c2")
 

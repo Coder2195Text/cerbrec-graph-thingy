@@ -4,6 +4,9 @@
   "devDependencies": {
     "parcel": "^2.13.3"
   },
+  "scripts": {
+    "start": "parcel ./src/index.html"
+  },
   "dependencies": {
     "@parcel/core": "^2.13.3"
   }
