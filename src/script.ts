@@ -1,4 +1,4 @@
-import "./jeffy"
+import "./jeffy.js"
 import { Link, Operation } from "./types";
 import { example } from "./example";
 
