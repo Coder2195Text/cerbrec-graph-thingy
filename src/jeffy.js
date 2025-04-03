@@ -15,7 +15,7 @@ let yPosRandIncrement = 400;
 let active = true;
 let checkBoxes = [];
 let checkBoxesPositions = [];
-
+let links = [];
 const svgCanvas = document.getElementById("connectionSVG");
 
 //press, xPos and yPos of bg at start
@@ -40,6 +40,14 @@ document.addEventListener("mousemove", (e) => {
     bgPosX += deltaX;
     bgPosY += deltaY;
     body.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
+    //updates control points positions to move with bg
+    links.forEach((l) => {
+      let temp = l.control_points;
+      temp.forEach((p) => {
+        p.x += deltaX;
+        p.y += deltaY;
+      });
+    });
 
     tablePositions.forEach(({ element, relativeLeft, relativeTop }) => {
       element.style.left = `${relativeLeft + bgPosX}px`;
@@ -81,7 +89,9 @@ document
       console.log("No file was selected.");
     }
   });
+//left input table
 let createInput = () => {
+  links = inputGraph.links;
   const inputValues = inputGraph.inputs;
   const inputDiv = document.createElement("div");
   inputDiv.classList.add("inputTable");
@@ -99,17 +109,12 @@ let createInput = () => {
   });
   body.append(inputDiv);
 };
+//right output table
 let createOutput = () => {
-  let maxLeft = 0;
-  tablePositions.forEach((table) => {
-    if (table.relativeLeft > maxLeft) {
-      maxLeft = table.relativeLeft;
-    }
-  });
   const outputValues = inputGraph.outputs;
   const outputDiv = document.createElement("div");
   outputDiv.classList.add("outputTable");
-  outputDiv.style.left = `${maxLeft + 500}px`;
+  outputDiv.style.left = "99vw";
   outputValues.forEach((i) => {
     const output = document.createElement("label");
     const temp = document.createElement("input");
@@ -120,7 +125,6 @@ let createOutput = () => {
     name.innerText = i.name;
     output.append(name);
     output.append(temp);
-    outputDiv.classList.add("draggable-table");
     outputDiv.append(output);
   });
   body.append(outputDiv);
@@ -278,16 +282,13 @@ let drawLine = (x1, y1, x2, y2) => {
   line.setAttribute("stroke-width", "2");
   svgCanvas.appendChild(line);
 };
-
 //draws all lines based on checkBoxesPositions and link arrays
 let addConnections = () => {
-  const links = inputGraph.links;
   let posOne = [];
   let posTwo = [];
   //grabs rels of links from original array and coords of new array
   links.forEach((l) => {
     let controlPoints = l.control_points;
-    let temp = Array.from(controlPoints);
     checkBoxesPositions.forEach((box) => {
       if (box.data === l.sink.data && box.operation === l.sink.operation) {
         posTwo = [box.x, box.y];
@@ -296,10 +297,10 @@ let addConnections = () => {
         posOne = [box.x, box.y];
       }
     });
-    if (temp.length === 0) {
+    if (controlPoints.length === 0) {
       drawLine(posOne[0] + 5, posOne[1] + 7, posTwo[0] + 5, posTwo[1] + 7);
     } else {
-      temp.forEach((point, index) => {
+      controlPoints.forEach((point) => {
         drawLine(posOne[0] + 5, posOne[1] + 7, point.x + 5, point.y + 7);
         posOne = [point.x, point.y];
       });

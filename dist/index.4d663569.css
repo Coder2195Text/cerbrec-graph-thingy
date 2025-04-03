@@ -39,7 +39,7 @@ body {
   height: 200px;
   display: flex;
   position: fixed;
-  top: 300px;
+  top: 10vh;
   left: 0;
 }
 
