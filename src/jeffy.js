@@ -114,7 +114,6 @@ let createOutput = () => {
   const outputValues = inputGraph.outputs;
   const outputDiv = document.createElement("div");
   outputDiv.classList.add("outputTable");
-  outputDiv.style.left = "99vw";
   outputValues.forEach((i) => {
     const output = document.createElement("label");
     const temp = document.createElement("input");

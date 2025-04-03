@@ -1,11 +1,8 @@
 body {
   --d: 1.5px;
-  background: radial-gradient(
-      circle at var(--d) var(--d),
+  background: radial-gradient(circle at var(--d) var(--d),
       #000 calc(var(--d) - 1px),
-      #0000 var(--d)
-    )
-    0 0 / 20px 20px;
+      #0000 var(--d)) 0 0 / 20px 20px;
 
   margin: 0;
   height: 100vh;
@@ -18,8 +15,10 @@ body {
   position: fixed;
   left: 0;
   right: 0;
+  bottom: 0;
   z-index: 100;
   padding: 10px;
+  background-color: gainsboro;
 }
 
 /*table css*/
@@ -36,19 +35,44 @@ body {
   align-items: center;
   overflow: hidden;
 }
+
 .inputTable,
 .outputTable {
   position: fixed;
-  left: 0px;
-  top: 10vh;
-  width: 80px;
-  height: 200px;
+
+  top: 0px;
+  width: 150px;
+  background-color: white;
+  height: 100dvh;
+  overflow: auto;
   border: 1px solid black;
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
+  padding-top: 50px;
+  ;
 }
+
+.outputTable {
+  right: 0px;
+}
+
+.inputTable {
+  left: 0px;
+}
+
+.inputTable>*,
+.outputTable>* {
+  max-height: 30px;
+  height: 30px;
+  display: block;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
 .name {
   max-height: 30px;
   min-height: 30px;
@@ -67,7 +91,7 @@ body {
   height: 100%;
   display: flex;
   justify-content: space-around;
-  align-items: center;
+  align-items: start;
   background-color: white;
 }
 
@@ -78,8 +102,8 @@ body {
 }
 
 /*each input/ouput checkbox */
-.inputs > *,
-.outputs > * {
+.inputs>*,
+.outputs>* {
   padding-top: 15px;
   padding-bottom: 15px;
   width: 140px;
@@ -114,6 +138,7 @@ body {
 .reset:active {
   background-color: red;
 }
+
 .organize {
   float: right;
   width: 5.6vw;
@@ -121,12 +146,13 @@ body {
   font-size: 1.2vw;
   background-color: cyan;
   z-index: 1000;
-  margin-left:20px;
+  margin-left: 20px;
 }
 
 .organize:active {
   background-color: blue;
 }
+
 #connectionSVG {
   position: absolute;
   top: 0px;

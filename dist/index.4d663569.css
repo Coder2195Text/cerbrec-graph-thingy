@@ -10,8 +10,10 @@ body {
 
 #controls {
   z-index: 100;
+  background-color: #dcdcdc;
   padding: 10px;
   position: fixed;
+  bottom: 0;
   left: 0;
   right: 0;
 }
@@ -31,16 +33,35 @@ body {
 }
 
 .inputTable, .outputTable {
+  background-color: #fff;
   border: 1px solid #000;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  width: 80px;
-  height: 200px;
-  display: flex;
+  width: 150px;
+  height: 100dvh;
+  padding-top: 50px;
   position: fixed;
-  top: 10vh;
+  top: 0;
+  overflow: auto;
+}
+
+.outputTable {
+  right: 0;
+}
+
+.inputTable {
   left: 0;
+}
+
+.inputTable > *, .outputTable > * {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+  max-height: 30px;
+  padding: 10px;
+  display: flex;
 }
 
 .name {
@@ -59,7 +80,7 @@ body {
 .inputOutputContainer {
   background-color: #fff;
   justify-content: space-around;
-  align-items: center;
+  align-items: start;
   width: 100%;
   height: 100%;
   display: flex;
