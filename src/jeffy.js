@@ -42,10 +42,10 @@ document.addEventListener("mousemove", (e) => {
     body.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
     //updates control points positions to move with bg
     links.forEach((l) => {
-      let temp = l.control_points;
-      temp.forEach((p) => {
-        p.x += deltaX;
-        p.y += deltaY;
+      let xYPair = l.control_points;
+      xYPair.forEach((c) => {
+        c.x += deltaX;
+        c.y += deltaY;
       });
     });
 
@@ -78,8 +78,11 @@ document
       reader.onload = function (e) {
         const fileContent = e.target.result;
         try {
-          inputGraph = JSON.parse(fileContent);
+          //double parse so reset doesn't delete original, allows for the same graph to be redisplayed later on single session
+          inputGraph = JSON.parse(JSON.stringify(JSON.parse(fileContent)));
           createDivs();
+          bgPosX=0; //makes sure created graph loads in correct spot
+          bgPosY=0; 
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
@@ -316,6 +319,8 @@ let refresh = () => {
 let resetFunction = () => {
   document.querySelectorAll(".draggable-table").forEach((e) => e.remove());
   document.querySelector(".inputTable").remove();
+  document.querySelector(".outputTable").remove();
+
   bgPosX = 0;
   bgPosY = 0;
   startX = 0;
@@ -326,12 +331,13 @@ let resetFunction = () => {
   checkBoxes = [];
   checkBoxesPositions = [];
   active = false;
+  tablePositions=[];
 };
 
 document.getElementById("reset").addEventListener("click", resetFunction);
 document.getElementById("organize").addEventListener("click", () => {
+  inputGraph =organize(inputGraph);
   resetFunction();
-  inputGraph = organize(inputGraph);
   createDivs();
   refresh();
 });
