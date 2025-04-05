@@ -33,6 +33,7 @@ body {
 }
 
 .inputTable, .outputTable {
+  z-index: 10;
   background-color: #fff;
   border: 1px solid #000;
   flex-direction: column;
@@ -46,6 +47,14 @@ body {
   overflow: auto;
 }
 
+.inputTable > * {
+  flex-direction: row;
+}
+
+.outputTable > * {
+  flex-direction: row-reverse;
+}
+
 .outputTable {
   right: 0;
 }
@@ -55,7 +64,6 @@ body {
 }
 
 .inputTable > *, .outputTable > * {
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   height: 30px;

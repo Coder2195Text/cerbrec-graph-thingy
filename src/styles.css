@@ -39,6 +39,7 @@ body {
 .inputTable,
 .outputTable {
   position: fixed;
+  z-index: 10;
 
   top: 0px;
   width: 150px;
@@ -51,6 +52,16 @@ body {
   justify-content: space-around;
   padding-top: 50px;
   ;
+}
+
+.inputTable>* {
+  flex-direction: row;
+}
+
+.outputTable>* {
+  /** reverse the order **/
+
+  flex-direction: row-reverse;
 }
 
 .outputTable {
@@ -67,7 +78,6 @@ body {
   height: 30px;
   display: block;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   padding: 10px;

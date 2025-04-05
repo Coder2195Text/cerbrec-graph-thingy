@@ -1,4 +1,3 @@
-import "./jeffy.js"
 import { Link, Operation } from "./types";
 import { example } from "./example";
 
@@ -169,15 +168,18 @@ export function organize(composite: Operation) {
   column_lookup["global_input"] = -1;
   delete column_lookup["global_output"];
 
+  let removedInputOffset = grid[0][0].op?.position?.y;
+  if (removedInputOffset) {
+    for (let i = 0; i < grid[0].length; i++) {
+      const op = grid[0][i].op;
+      if (!op) continue;
 
-  for (let i = 0; i < grid[0].length; i++) {
-    const op = grid[0][i].op;
-    if (!op || op.name == "global_input" || op.name == "global_output" || op.name == "this") {
-      console.log("hit global")
-      continue;
+      op.position!.y -= removedInputOffset;
     }
-    op.position!.y -= GAP_SIZE;
   }
+
+
+
 
 
 

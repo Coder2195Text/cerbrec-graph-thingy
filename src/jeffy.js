@@ -72,7 +72,8 @@ document.addEventListener("mouseup", () => {
 document
   .getElementById("inputFile")
   .addEventListener("change", function (event) {
-    const file = event.target.files[event.target.files.length - 1];
+    const elm = event.target;
+    const file = elm.files[event.target.files.length - 1];
     if (file) {
       const reader = new FileReader();
       reader.onload = function (e) {
@@ -81,8 +82,8 @@ document
           //double parse so reset doesn't delete original, allows for the same graph to be redisplayed later on single session
           inputGraph = JSON.parse(JSON.stringify(JSON.parse(fileContent)));
           createDivs();
-          bgPosX=0; //makes sure created graph loads in correct spot
-          bgPosY=0; 
+          bgPosX = 0; //makes sure created graph loads in correct spot
+          bgPosY = 0;
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
@@ -91,6 +92,8 @@ document
     } else {
       console.log("No file was selected.");
     }
+
+    elm.value = "";
   });
 //left input table
 let createInput = () => {
@@ -331,12 +334,12 @@ let resetFunction = () => {
   checkBoxes = [];
   checkBoxesPositions = [];
   active = false;
-  tablePositions=[];
+  tablePositions = [];
 };
 
 document.getElementById("reset").addEventListener("click", resetFunction);
 document.getElementById("organize").addEventListener("click", () => {
-  inputGraph =organize(inputGraph);
+  inputGraph = organize(inputGraph);
   resetFunction();
   createDivs();
   refresh();

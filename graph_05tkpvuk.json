@@ -1,0 +1,859 @@
+{
+  "name": "Composite_ab398666",
+  "type": "COMPOSITE_OPERATION",
+  "inputs": [
+    {
+      "name": "input_0",
+      "primitive_name": "input_0"
+    },
+    {
+      "name": "input_1",
+      "primitive_name": "input_1"
+    },
+    {
+      "name": "input_2",
+      "primitive_name": "input_2"
+    },
+    {
+      "name": "input_3",
+      "primitive_name": "input_3"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output_0",
+      "primitive_name": "output_0"
+    },
+    {
+      "name": "output_1",
+      "primitive_name": "output_1"
+    },
+    {
+      "name": "output_2",
+      "primitive_name": "output_2"
+    }
+  ],
+  "operations": [
+    {
+      "name": "Op_cee69bf6",
+      "primitive_name": "conditional_filter",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "condition",
+          "primitive_name": "condition",
+          "type": "TEXT",
+          "shape": [],
+          "data": "world",
+          "flow_state": "BOOT_SOURCE"
+        },
+        {
+          "name": "data_if_true",
+          "primitive_name": "data_if_true",
+          "type": "BOOLEAN",
+          "shape": [],
+          "data": true,
+          "flow_state": "BOOT_SOURCE"
+        },
+        {
+          "name": "data_if_false",
+          "primitive_name": "data_if_false",
+          "type": "TEXT",
+          "shape": [],
+          "data": "world",
+          "flow_state": "BOOT_SOURCE"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output_data",
+          "primitive_name": "output_data"
+        }
+      ]
+    },
+    {
+      "name": "Op_c2b879bf",
+      "primitive_name": "split_subwords_longest_match_first",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "words",
+          "primitive_name": "words",
+          "type": "INTEGER",
+          "shape": [],
+          "data": 17,
+          "flow_state": "BOOT_SOURCE"
+        },
+        {
+          "name": "vocabulary",
+          "primitive_name": "vocabulary"
+        },
+        {
+          "name": "skip_vocabulary",
+          "primitive_name": "skip_vocabulary"
+        },
+        {
+          "name": "subword_prefix",
+          "primitive_name": "subword_prefix"
+        },
+        {
+          "name": "unknown_tag",
+          "primitive_name": "unknown_tag"
+        },
+        {
+          "name": "pad_tag",
+          "primitive_name": "pad_tag"
+        },
+        {
+          "name": "scan_from_right",
+          "primitive_name": "scan_from_right"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "subwords",
+          "primitive_name": "subwords"
+        }
+      ]
+    },
+    {
+      "name": "Op_28b00957",
+      "primitive_name": "less_than",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "left_operand",
+          "primitive_name": "left_operand"
+        },
+        {
+          "name": "right_operand",
+          "primitive_name": "right_operand"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "is_less_than",
+          "primitive_name": "is_less_than"
+        }
+      ]
+    },
+    {
+      "name": "Op_580b6de8",
+      "primitive_name": "filter",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "array",
+          "primitive_name": "array"
+        },
+        {
+          "name": "dimension_index",
+          "primitive_name": "dimension_index",
+          "type": "DECIMAL",
+          "shape": [],
+          "data": 90.25,
+          "flow_state": "BOOT_SOURCE"
+        },
+        {
+          "name": "condition",
+          "primitive_name": "condition",
+          "type": "INTEGER",
+          "shape": [],
+          "data": 92,
+          "flow_state": "BOOT_SOURCE"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filtered_array",
+          "primitive_name": "filtered_array"
+        }
+      ]
+    },
+    {
+      "name": "Op_50fb7495",
+      "primitive_name": "generate_combinations_batch",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "array",
+          "primitive_name": "array"
+        },
+        {
+          "name": "number_of_samples",
+          "primitive_name": "number_of_samples"
+        },
+        {
+          "name": "batch_size",
+          "primitive_name": "batch_size"
+        },
+        {
+          "name": "start_index",
+          "primitive_name": "start_index"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "samples",
+          "primitive_name": "samples"
+        }
+      ]
+    },
+    {
+      "name": "Op_b6c3b35b",
+      "primitive_name": "exist_in_files",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "dir_path",
+          "primitive_name": "dir_path"
+        },
+        {
+          "name": "file_name",
+          "primitive_name": "file_name"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "is_exist",
+          "primitive_name": "is_exist"
+        }
+      ]
+    },
+    {
+      "name": "Op_ebbe57ec",
+      "primitive_name": "parse_integer",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "input",
+          "primitive_name": "input"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "primitive_name": "output"
+        }
+      ]
+    },
+    {
+      "name": "Op_345fcbae",
+      "primitive_name": "get_text_length",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "input",
+          "primitive_name": "input",
+          "type": "BOOLEAN",
+          "shape": [],
+          "data": true,
+          "flow_state": "BOOT_SOURCE"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "primitive_name": "output"
+        }
+      ]
+    },
+    {
+      "name": "Op_b8326adb",
+      "primitive_name": "contain_seq",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "target",
+          "primitive_name": "target"
+        },
+        {
+          "name": "check_against",
+          "primitive_name": "check_against",
+          "type": "INTEGER",
+          "shape": [],
+          "data": 83,
+          "flow_state": "BOOT_SOURCE"
+        },
+        {
+          "name": "padding_value",
+          "primitive_name": "padding_value"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "is_contain",
+          "primitive_name": "is_contain"
+        }
+      ]
+    },
+    {
+      "name": "Op_160ed4b6",
+      "primitive_name": "eigen",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "input",
+          "primitive_name": "input"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "eigen_vectors",
+          "primitive_name": "eigen_vectors"
+        },
+        {
+          "name": "eigen_values",
+          "primitive_name": "eigen_values"
+        }
+      ]
+    },
+    {
+      "name": "Op_87946b2b",
+      "primitive_name": "argument_multinomial",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "probabilities",
+          "primitive_name": "probabilities"
+        },
+        {
+          "name": "dimension_index",
+          "primitive_name": "dimension_index",
+          "type": "BOOLEAN",
+          "shape": [],
+          "data": true,
+          "flow_state": "BOOT_SOURCE"
+        },
+        {
+          "name": "number_samples",
+          "primitive_name": "number_samples"
+        },
+        {
+          "name": "random_seed",
+          "primitive_name": "random_seed"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "argument",
+          "primitive_name": "argument"
+        }
+      ]
+    },
+    {
+      "name": "Op_3ddec0d5",
+      "primitive_name": "contain_seq",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "target",
+          "primitive_name": "target"
+        },
+        {
+          "name": "check_against",
+          "primitive_name": "check_against"
+        },
+        {
+          "name": "padding_value",
+          "primitive_name": "padding_value",
+          "type": "INTEGER",
+          "shape": [],
+          "data": 24,
+          "flow_state": "BOOT_SOURCE"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "is_contain",
+          "primitive_name": "is_contain"
+        }
+      ]
+    },
+    {
+      "name": "Op_d8369af6",
+      "primitive_name": "greater_than",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "left_operand",
+          "primitive_name": "left_operand"
+        },
+        {
+          "name": "right_operand",
+          "primitive_name": "right_operand"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "is_greater_than",
+          "primitive_name": "is_greater_than"
+        }
+      ]
+    },
+    {
+      "name": "Op_0594165a",
+      "primitive_name": "scatter_add",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "input",
+          "primitive_name": "input",
+          "type": "INTEGER",
+          "shape": [],
+          "data": 5,
+          "flow_state": "BOOT_SOURCE"
+        },
+        {
+          "name": "index_array",
+          "primitive_name": "index_array"
+        },
+        {
+          "name": "source_array",
+          "primitive_name": "source_array"
+        },
+        {
+          "name": "dimension_index",
+          "primitive_name": "dimension_index"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "scatter_array",
+          "primitive_name": "scatter_array"
+        }
+      ]
+    },
+    {
+      "name": "Op_ea6fb55d",
+      "primitive_name": "get_text_length",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "input",
+          "primitive_name": "input"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "primitive_name": "output"
+        }
+      ]
+    },
+    {
+      "name": "Op_d44a3d22",
+      "primitive_name": "broadcast_to_shape",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "target",
+          "primitive_name": "target"
+        },
+        {
+          "name": "shape",
+          "primitive_name": "shape"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "result",
+          "primitive_name": "result"
+        }
+      ]
+    },
+    {
+      "name": "Op_25a9cbf6",
+      "primitive_name": "lower_upper_case_text",
+      "type": "PRIMITIVE_OPERATION",
+      "inputs": [
+        {
+          "name": "text",
+          "primitive_name": "text"
+        },
+        {
+          "name": "is_lower_case",
+          "primitive_name": "is_lower_case"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "processed_text",
+          "primitive_name": "processed_text"
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_c2b879bf",
+        "data": "vocabulary"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_c2b879bf",
+        "data": "skip_vocabulary"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_c2b879bf",
+        "data": "subword_prefix"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_c2b879bf",
+        "data": "unknown_tag"
+      }
+    },
+    {
+      "source": {
+        "operation": "this",
+        "data": "input_1"
+      },
+      "sink": {
+        "operation": "Op_c2b879bf",
+        "data": "pad_tag"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_c2b879bf",
+        "data": "scan_from_right"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_28b00957",
+        "data": "left_operand"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_28b00957",
+        "data": "right_operand"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_28b00957",
+        "data": "is_less_than"
+      },
+      "sink": {
+        "operation": "Op_580b6de8",
+        "data": "array"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_28b00957",
+        "data": "is_less_than"
+      },
+      "sink": {
+        "operation": "Op_50fb7495",
+        "data": "array"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_580b6de8",
+        "data": "filtered_array"
+      },
+      "sink": {
+        "operation": "Op_50fb7495",
+        "data": "number_of_samples"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_580b6de8",
+        "data": "filtered_array"
+      },
+      "sink": {
+        "operation": "Op_50fb7495",
+        "data": "batch_size"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_50fb7495",
+        "data": "start_index"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_b6c3b35b",
+        "data": "dir_path"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_cee69bf6",
+        "data": "output_data"
+      },
+      "sink": {
+        "operation": "Op_b6c3b35b",
+        "data": "file_name"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_580b6de8",
+        "data": "filtered_array"
+      },
+      "sink": {
+        "operation": "Op_ebbe57ec",
+        "data": "input"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_50fb7495",
+        "data": "samples"
+      },
+      "sink": {
+        "operation": "Op_b8326adb",
+        "data": "target"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_ebbe57ec",
+        "data": "output"
+      },
+      "sink": {
+        "operation": "Op_b8326adb",
+        "data": "padding_value"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_50fb7495",
+        "data": "samples"
+      },
+      "sink": {
+        "operation": "Op_160ed4b6",
+        "data": "input"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_b6c3b35b",
+        "data": "is_exist"
+      },
+      "sink": {
+        "operation": "Op_87946b2b",
+        "data": "probabilities"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_580b6de8",
+        "data": "filtered_array"
+      },
+      "sink": {
+        "operation": "Op_87946b2b",
+        "data": "number_samples"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_b6c3b35b",
+        "data": "is_exist"
+      },
+      "sink": {
+        "operation": "Op_87946b2b",
+        "data": "random_seed"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_87946b2b",
+        "data": "argument"
+      },
+      "sink": {
+        "operation": "Op_3ddec0d5",
+        "data": "target"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_87946b2b",
+        "data": "argument"
+      },
+      "sink": {
+        "operation": "Op_3ddec0d5",
+        "data": "check_against"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_3ddec0d5",
+        "data": "is_contain"
+      },
+      "sink": {
+        "operation": "Op_d8369af6",
+        "data": "left_operand"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_c2b879bf",
+        "data": "subwords"
+      },
+      "sink": {
+        "operation": "Op_d8369af6",
+        "data": "right_operand"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_c2b879bf",
+        "data": "subwords"
+      },
+      "sink": {
+        "operation": "Op_0594165a",
+        "data": "index_array"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_50fb7495",
+        "data": "samples"
+      },
+      "sink": {
+        "operation": "Op_0594165a",
+        "data": "source_array"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_160ed4b6",
+        "data": "eigen_values"
+      },
+      "sink": {
+        "operation": "Op_0594165a",
+        "data": "dimension_index"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_d8369af6",
+        "data": "is_greater_than"
+      },
+      "sink": {
+        "operation": "Op_ea6fb55d",
+        "data": "input"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_87946b2b",
+        "data": "argument"
+      },
+      "sink": {
+        "operation": "Op_d44a3d22",
+        "data": "target"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_ebbe57ec",
+        "data": "output"
+      },
+      "sink": {
+        "operation": "Op_d44a3d22",
+        "data": "shape"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_50fb7495",
+        "data": "samples"
+      },
+      "sink": {
+        "operation": "Op_25a9cbf6",
+        "data": "text"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_580b6de8",
+        "data": "filtered_array"
+      },
+      "sink": {
+        "operation": "Op_25a9cbf6",
+        "data": "is_lower_case"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_d44a3d22",
+        "data": "result"
+      },
+      "sink": {
+        "operation": "this",
+        "data": "output_0"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_580b6de8",
+        "data": "filtered_array"
+      },
+      "sink": {
+        "operation": "this",
+        "data": "output_1"
+      }
+    },
+    {
+      "source": {
+        "operation": "Op_0594165a",
+        "data": "scatter_array"
+      },
+      "sink": {
+        "operation": "this",
+        "data": "output_2"
+      }
+    }
+  ]
+}
