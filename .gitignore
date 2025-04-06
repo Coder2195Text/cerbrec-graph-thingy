@@ -12,3 +12,4 @@
 #!.yarn/cache
 .pnp.*
 .parcel-cache/
+dist/
