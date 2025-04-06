@@ -1,3 +1,4 @@
+import { basic_organize } from "./basic_organize.ts";
 import { organize } from "./script.ts"
 const body = document.querySelector("body");
 let tables = document.querySelectorAll(".draggable-table");
@@ -43,6 +44,8 @@ document.addEventListener("mousemove", (e) => {
     //updates control points positions to move with bg
     links.forEach((l) => {
       let xYPair = l.control_points;
+      // added this for no arrays
+      if (!xYPair?.length) return;
       xYPair.forEach((c) => {
         c.x += deltaX;
         c.y += deltaY;
@@ -81,6 +84,7 @@ document
         try {
           //double parse so reset doesn't delete original, allows for the same graph to be redisplayed later on single session
           inputGraph = JSON.parse(JSON.stringify(JSON.parse(fileContent)));
+          basic_organize(inputGraph);
           createDivs();
           bgPosX = 0; //makes sure created graph loads in correct spot
           bgPosY = 0;
@@ -302,7 +306,8 @@ let addConnections = () => {
         posOne = [box.x, box.y];
       }
     });
-    if (controlPoints.length === 0) {
+    // changed from controlPoints.length === 0 to account for no arrays
+    if (!controlPoints?.length) {
       drawLine(posOne[0] + 5, posOne[1] + 7, posTwo[0] + 5, posTwo[1] + 7);
     } else {
       controlPoints.forEach((point) => {

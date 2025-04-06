@@ -596,6 +596,7 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"eBQxv":[function(require,module,exports,__globalThis) {
+var _basicOrganizeTs = require("./basic_organize.ts");
 var _scriptTs = require("./script.ts");
 const body = document.querySelector("body");
 let tables = document.querySelectorAll(".draggable-table");
@@ -638,6 +639,7 @@ document.addEventListener("mousemove", (e)=>{
         //updates control points positions to move with bg
         links.forEach((l)=>{
             let xYPair = l.control_points;
+            if (!xYPair?.length) return;
             xYPair.forEach((c)=>{
                 c.x += deltaX;
                 c.y += deltaY;
@@ -668,6 +670,7 @@ document.getElementById("inputFile").addEventListener("change", function(event) 
             try {
                 //double parse so reset doesn't delete original, allows for the same graph to be redisplayed later on single session
                 inputGraph = JSON.parse(JSON.stringify(JSON.parse(fileContent)));
+                (0, _basicOrganizeTs.basic_organize)(inputGraph);
                 createDivs();
                 bgPosX = 0; //makes sure created graph loads in correct spot
                 bgPosY = 0;
@@ -864,7 +867,8 @@ let addConnections = ()=>{
                 box.y
             ];
         });
-        if (controlPoints.length === 0) drawLine(posOne[0] + 5, posOne[1] + 7, posTwo[0] + 5, posTwo[1] + 7);
+        // changed from controlPoints.length === 0 to account for no arrays
+        if (!controlPoints?.length) drawLine(posOne[0] + 5, posOne[1] + 7, posTwo[0] + 5, posTwo[1] + 7);
         else {
             controlPoints.forEach((point)=>{
                 drawLine(posOne[0] + 5, posOne[1] + 7, point.x + 5, point.y + 7);
@@ -907,9 +911,53 @@ document.getElementById("organize").addEventListener("click", ()=>{
     refresh();
 });
 
-},{"./script.ts":"gg0zR"}],"gg0zR":[function(require,module,exports,__globalThis) {
+},{"./basic_organize.ts":"9MEt9","./script.ts":"gg0zR"}],"9MEt9":[function(require,module,exports,__globalThis) {
+// basic organize for fixing default graphs without positions
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "basic_organize", ()=>basic_organize);
+function basic_organize(graph) {
+    if (!graph.operations) return;
+    for (const node of graph.operations)node.position = {
+        x: Math.random() * 2000,
+        y: Math.random() * 1000
+    };
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"2lomK"}],"2lomK":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"gg0zR":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "height", ()=>height);
 parcelHelpers.export(exports, "organize", ()=>organize);
 var _example = require("./example");
 /**
@@ -920,6 +968,9 @@ function interleave(arr, thing) {
             n,
             thing
         ])).slice(0, -1);
+}
+function height(op) {
+    return (Math.max(op.inputs.length, op.outputs.length) + 1) * 50;
 }
 function organize(composite) {
     const nodes = {
@@ -954,9 +1005,6 @@ function organize(composite) {
             }
         }
     };
-    function height(op) {
-        return (Math.max(op.inputs.length, op.outputs.length) + 1) * 50;
-    }
     let visited = {};
     // first pass add nodes
     for (const op of composite.operations || []){
@@ -2383,36 +2431,6 @@ const example = {
     ]
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"2lomK"}],"2lomK":[function(require,module,exports,__globalThis) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}]},["j3Lez","eBQxv"], "eBQxv", "parcelRequire94c2")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"2lomK"}]},["j3Lez","eBQxv"], "eBQxv", "parcelRequire94c2")
 
 //# sourceMappingURL=index.304acc54.js.map

@@ -36,6 +36,13 @@ export interface Variable<T extends DataType> {
   flow_state?: FlowState;
 }
 
+export type Node = {
+  id: string;
+  children: Node[];
+  parents: Node[];
+  op?: Operation;
+};
+
 type RequiredPrimVariable<T extends DataType> = RequiredSome<Variable<T>, "primitive_name">
 
 interface LinkEndpoint {
@@ -55,8 +62,8 @@ export interface Operation {
   position?: Position;
   aliases?: string[];
   type: OperationType;
-  inputs: Variable<any>[];
-  outputs: Variable<any>[];
+  inputs: Variable<DataType>[];
+  outputs: Variable<DataType>[];
   asserations?: string[];
   description?: string;
   // examples not included

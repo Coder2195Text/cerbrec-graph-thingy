@@ -1,4 +1,4 @@
-import { Link, Operation } from "./types";
+import { Link, Node, Operation } from "./types";
 import { example } from "./example";
 
 
@@ -12,12 +12,10 @@ function interleave<T, A>(arr: T[], thing: A): (T | A)[] {
 }
 
 
-type Node = {
-  id: string;
-  children: Node[];
-  parents: Node[];
-  op?: Operation;
+export function height(op: Operation) {
+  return (Math.max(op.inputs.length, op.outputs.length) + 1) * 50;
 }
+
 
 export function organize(composite: Operation) {
 
@@ -48,9 +46,7 @@ export function organize(composite: Operation) {
     }
   };
 
-  function height(op: Operation) {
-    return (Math.max(op.inputs.length, op.outputs.length) + 1) * 50;
-  }
+
 
 
 
