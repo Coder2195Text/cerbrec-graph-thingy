@@ -18,7 +18,6 @@ export function height(op: Operation) {
 
 
 export function organize(composite: Operation) {
-
   const nodes: { [key: string]: Node } = {
     "global_input": {
       id: "global_input",
@@ -55,10 +54,12 @@ export function organize(composite: Operation) {
   // first pass add nodes
   for (const op of composite.operations || []) {
     let operation = op as Operation;
-    operation.position = {
-      x: 0,
-      y: 0
-    }
+      operation.position = {
+        x: 0,
+        y: 0
+      };
+      
+    
     nodes[operation.name] = {
       id: operation.name,
       children: [],
