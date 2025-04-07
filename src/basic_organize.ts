@@ -2,13 +2,14 @@
 
 import { Composite } from "./types";
 
-export function basic_organize(graph: Composite) {
-  if (!graph.operations) return;
+export function basic_organize(graph: Composite): Composite {
+  if (!graph.operations) return graph;
   for (const node of graph.operations) {
     if (
       !node.position ||
-      node.position.x === undefined ||
-      node.position.y === undefined
+      // double == to check for null as well
+      node.position.x == undefined ||
+      node.position.y == undefined
     ) {
       node.position = {
         x: Math.random() * 2000,
@@ -16,4 +17,6 @@ export function basic_organize(graph: Composite) {
       };
     }
   }
+
+  return graph;
 }

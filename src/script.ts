@@ -54,12 +54,12 @@ export function organize(composite: Operation) {
   // first pass add nodes
   for (const op of composite.operations || []) {
     let operation = op as Operation;
-      operation.position = {
-        x: 0,
-        y: 0
-      };
-      
-    
+    operation.position = {
+      x: 0,
+      y: 0
+    };
+
+
     nodes[operation.name] = {
       id: operation.name,
       children: [],
@@ -99,6 +99,7 @@ export function organize(composite: Operation) {
   const grid: (Node)[][] = new Array(COLUMNS);
 
   for (let i = 0; i < COLUMNS; i++) {
+
     grid[i] = [];
   }
 
@@ -229,7 +230,7 @@ export function organize(composite: Operation) {
 
 
 
-  console.log(nodes["global_input"]);
+  console.log(nodes["global_input"],);
   // console.log(nodes);
   //
   console.log(nodes)
