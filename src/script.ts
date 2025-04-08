@@ -119,6 +119,9 @@ export function organize(composite: Operation) {
       const n = root_nodes[i];
       visited[n.id] = true;
 
+      if (!grid[column]) {
+        grid[column] = [];
+      }
 
       grid[column][i] = n;
       column_lookup[n.id] = column;
