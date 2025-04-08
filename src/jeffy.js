@@ -10,8 +10,6 @@ let bgPosX = 0;
 let bgPosY = 0;
 let inputGraph;
 let operations = [];
-let xPosRandIncrement = 400;
-let yPosRandIncrement = 400;
 
 let active = true;
 let checkBoxes = [];
@@ -150,17 +148,6 @@ let createDivs = () => {
     const outputs = document.createElement("div");
     let numInputs = o.inputs.length;
     let numOutputs = o.outputs.length;
-    // Assign temporary x and y values for random graph visuals
-    if (!o?.position?.x && !o?.position?.y) {
-      o.position = {};
-      o.position.x = xPosRandIncrement;
-      o.position.y = yPosRandIncrement;
-      xPosRandIncrement += 300;
-      if (xPosRandIncrement > 1600) {
-        xPosRandIncrement = 400;
-        yPosRandIncrement += 300;
-      }
-    }
     tablePositions.push({
       element: mainOperation,
       relativeLeft: parseInt(o.position.x),
@@ -274,13 +261,12 @@ let parseCheckBoxes = () => {
         x: rect.x,
         y: rect.y,
         data: checkbox.previousElementSibling.innerText,
-        operation: "this", //not really sure how the links with this works so...
+        operation: "this", 
       });
     }
   });
 };
 
-//basic function to draw a line between two coordiantes
 let drawLine = (x1, y1, x2, y2) => {
   const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
   line.setAttribute("x1", x1);
@@ -291,6 +277,16 @@ let drawLine = (x1, y1, x2, y2) => {
   line.setAttribute("stroke-width", "2");
   svgCanvas.appendChild(line);
 };
+let drawCircle = (x, y) => {
+  const color = "black"
+  const radius = 5;
+  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  circle.setAttribute("cx", x);
+  circle.setAttribute("cy", y);
+  circle.setAttribute("r", radius);
+  circle.setAttribute("fill", color);
+  svgCanvas.append(circle);
+}
 //draws all lines based on checkBoxesPositions and link arrays
 let addConnections = () => {
   let posOne = [];
@@ -306,12 +302,12 @@ let addConnections = () => {
         posOne = [box.x, box.y];
       }
     });
-    // changed from controlPoints.length === 0 to account for no arrays
     if (!controlPoints?.length) {
       drawLine(posOne[0] + 5, posOne[1] + 7, posTwo[0] + 5, posTwo[1] + 7);
     } else {
       controlPoints.forEach((point) => {
         drawLine(posOne[0] + 5, posOne[1] + 7, point.x + 5, point.y + 7);
+        drawCircle(point.x+5, point.y+7)
         posOne = [point.x, point.y];
       });
       drawLine(posOne[0] + 5, posOne[1] + 7, posTwo[0] + 5, posTwo[1] + 7);
@@ -333,8 +329,6 @@ let resetFunction = () => {
   bgPosY = 0;
   startX = 0;
   startY = 0;
-  xPosRandIncrement = 400;
-  yPosRandIncrement = 400;
   svgCanvas.innerHTML = "";
   checkBoxes = [];
   checkBoxesPositions = [];

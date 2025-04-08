@@ -169,17 +169,17 @@ export function organize(composite: Operation) {
   column_lookup["global_input"] = -1;
   delete column_lookup["global_output"];
 
-  let removedInputOffset = grid[0][0].op?.position?.y;
-  if (removedInputOffset) {
+  let removedInputOffset = grid[0][0]?.op?.position?.y;
+  if (removedInputOffset){
     for (let i = 0; i < grid[0].length; i++) {
       const op = grid[0][i].op;
-      if (!op) continue;
-
-      op.position!.y -= removedInputOffset;
+      
+      // Check if op exists before accessing op.position.y
+      if (op && op.position && op.position.y) {
+        op.position.y -= removedInputOffset;
+      }
     }
   }
-
-
 
 
 
