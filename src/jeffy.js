@@ -1,5 +1,5 @@
 import { basic_organize } from "./basic_organize.ts";
-import { organize } from "./script.ts"
+import { organize } from "./graph.ts"
 const body = document.querySelector("body");
 let tables = document.querySelectorAll(".draggable-table");
 let tablePositions = [];
@@ -261,7 +261,7 @@ let parseCheckBoxes = () => {
         x: rect.x,
         y: rect.y,
         data: checkbox.previousElementSibling.innerText,
-        operation: "this", 
+        operation: "this",
       });
     }
   });
@@ -277,10 +277,13 @@ let drawLine = (x1, y1, x2, y2) => {
   line.setAttribute("stroke-width", "2");
   svgCanvas.appendChild(line);
 };
-let drawCircle = (x, y) => {
+// connection refers back to the link
+let drawCircle = (x, y, connection = undefined) => {
   const color = "black"
   const radius = 5;
   const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  // connection data
+  circle.connection = connection;
   circle.setAttribute("cx", x);
   circle.setAttribute("cy", y);
   circle.setAttribute("r", radius);
@@ -307,7 +310,7 @@ let addConnections = () => {
     } else {
       controlPoints.forEach((point) => {
         drawLine(posOne[0] + 5, posOne[1] + 7, point.x + 5, point.y + 7);
-        drawCircle(point.x+5, point.y+7)
+        drawCircle(point.x + 5, point.y + 7, l)
         posOne = [point.x, point.y];
       });
       drawLine(posOne[0] + 5, posOne[1] + 7, posTwo[0] + 5, posTwo[1] + 7);

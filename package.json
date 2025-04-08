@@ -1,13 +1,16 @@
 {
   "name": "graph-cleaner",
+  "type": "module",
   "packageManager": "yarn@4.6.0",
   "devDependencies": {
     "parcel": "^2.13.3"
   },
   "scripts": {
-    "start": "parcel ./src/index.html"
+    "start": "parcel ./src/*"
   },
   "dependencies": {
-    "@parcel/core": "^2.13.3"
+    "@parcel/core": "^2.13.3",
+    "@pixi/ui": "^2.2.2",
+    "pixi.js": "^8.9.1"
   }
 }
