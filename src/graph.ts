@@ -5,7 +5,7 @@ import { example } from "./example";
 /**
 * THIS ALGORITHM WILL NOT WORK FOR CYCLIC GRAPHS!!!
   */
-const GAP_SIZE = 325;
+export const GAP_SIZE = 325;
 
 function interleave<T, A>(arr: T[], thing: A): (T | A)[] {
   return ([] as (T | A)[]).concat(...arr.map(n => [n, thing])).slice(0, -1)
@@ -170,10 +170,10 @@ export function organize(composite: Operation) {
   delete column_lookup["global_output"];
 
   let removedInputOffset = grid[0][0]?.op?.position?.y;
-  if (removedInputOffset){
+  if (removedInputOffset) {
     for (let i = 0; i < grid[0].length; i++) {
       const op = grid[0][i].op;
-      
+
       // Check if op exists before accessing op.position.y
       if (op && op.position && op.position.y) {
         op.position.y -= removedInputOffset;
