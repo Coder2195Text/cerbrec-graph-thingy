@@ -59,6 +59,14 @@ body {
   padding-top: 50px;
   ;
 }
+.circle{
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: blue;
+  position:absolute;
+  cursor: pointer;
+}
 
 .inputTable>* {
   flex-direction: row;
@@ -136,12 +144,11 @@ body {
 /* reset button and prevent select for adding file*/
 .prevent-select {
   user-select: none;
-  font-size: 0.6vw;
-  width: 5vw;
-  height: 3vh;
-  color: transparent;
 }
-
+label div{
+  max-width: 120px;
+  word-wrap: break-word;
+}
 .reset {
   float: right;
   width: 5vw;

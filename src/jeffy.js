@@ -1,10 +1,11 @@
 import { basic_organize } from "./basic_organize.ts";
-import { organize } from "./graph.ts"
+import { organize } from "./graph.ts";
 const body = document.querySelector("body");
 let tables = document.querySelectorAll(".draggable-table");
 let tablePositions = [];
 let isDraggingBackground = false;
-let isDraggingTable = null;
+let currentDraggingTable = null;
+let currentDraggingCircle = null;
 let startX, startY;
 let bgPosX = 0;
 let bgPosY = 0;
@@ -19,19 +20,23 @@ const svgCanvas = document.getElementById("connectionSVG");
 
 //press, xPos and yPos of bg at start
 body.addEventListener("mousedown", (e) => {
-  if (!e.target.classList.contains("draggable-table")) {
+  if (
+    !e.target.classList.contains("draggable-table") ||
+    !e.target.classList.contains("circle")
+  ) {
     isDraggingBackground = true;
     startX = e.clientX;
     startY = e.clientY;
   }
 });
+
 //mouse movement
 document.addEventListener("mousemove", (e) => {
-  if (isDraggingTable) {
+  if (currentDraggingTable) {
     const newLeft = e.clientX - startX;
     const newTop = e.clientY - startY;
-    isDraggingTable.style.left = `${newLeft}px`;
-    isDraggingTable.style.top = `${newTop}px`;
+    currentDraggingTable.style.left = `${newLeft}px`;
+    currentDraggingTable.style.top = `${newTop}px`;
   } else if (isDraggingBackground) {
     const deltaX = e.clientX - startX;
     const deltaY = e.clientY - startY;
@@ -39,10 +44,9 @@ document.addEventListener("mousemove", (e) => {
     bgPosX += deltaX;
     bgPosY += deltaY;
     body.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
-    //updates control points positions to move with bg
+
     links.forEach((l) => {
       let xYPair = l.control_points;
-      // added this for no arrays
       if (!xYPair?.length) return;
       xYPair.forEach((c) => {
         c.x += deltaX;
@@ -57,19 +61,48 @@ document.addEventListener("mousemove", (e) => {
 
     startX = e.clientX;
     startY = e.clientY;
+  } else if (currentDraggingCircle) {
+    const newLeft = e.clientX - startX;
+    const newTop = e.clientY - startY;
+
+    currentDraggingCircle.style.left = `${newLeft}px`;
+    currentDraggingCircle.style.top = `${newTop}px`;
+
+    //parse what index to alter linkIndex for link, controlPointIndex for which control point of each link
+    const linkIndex = parseInt(currentDraggingCircle.dataset.linkIndex);
+    const controlPointIndex = parseInt(
+      currentDraggingCircle.dataset.controlPointIndex
+    );
+
+    //update the link data
+    if (
+      !isNaN(linkIndex) &&
+      !isNaN(controlPointIndex) &&
+      links[linkIndex] &&
+      links[linkIndex].control_points &&
+      links[linkIndex].control_points[controlPointIndex]
+    ) {
+      links[linkIndex].control_points[controlPointIndex].x = newLeft;
+      links[linkIndex].control_points[controlPointIndex].y = newTop;
+    }
   }
+
   if (active) {
     refresh();
   }
 });
+
 //release
 document.addEventListener("mouseup", () => {
   isDraggingBackground = false;
-  if (isDraggingTable) {
-    isDraggingTable = null;
+  if (currentDraggingTable) {
+    currentDraggingTable = null;
+  }
+  if (currentDraggingCircle) {
+    currentDraggingCircle = null;
   }
 });
-//Obtain object from last inputted json inputted json
+
 document
   .getElementById("inputFile")
   .addEventListener("change", function (event) {
@@ -80,23 +113,23 @@ document
       reader.onload = function (e) {
         const fileContent = e.target.result;
         try {
-          //double parse so reset doesn't delete original, allows for the same graph to be redisplayed later on single session
           inputGraph = JSON.parse(JSON.stringify(JSON.parse(fileContent)));
           basic_organize(inputGraph);
           createDivs();
-          bgPosX = 0; //makes sure created graph loads in correct spot
+          bgPosX = 0;
           bgPosY = 0;
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
       };
-      reader.readAsText(file); //reads file and adds to assigns to inputGraph
+      reader.readAsText(file);
     } else {
       console.log("No file was selected.");
     }
 
     elm.value = "";
   });
+
 //left input table
 let createInput = () => {
   links = inputGraph.links;
@@ -117,6 +150,7 @@ let createInput = () => {
   });
   body.append(inputDiv);
 };
+
 //right output table
 let createOutput = () => {
   const outputValues = inputGraph.outputs;
@@ -124,26 +158,26 @@ let createOutput = () => {
   outputDiv.classList.add("outputTable");
   outputValues.forEach((i) => {
     const output = document.createElement("label");
-    const temp = document.createElement("input");
     const name = document.createElement("div");
-    output.setAttribute("id", i.name);
-    temp.setAttribute("type", "checkbox");
-    temp.classList.add("output-box");
+    const temp = document.createElement("input");
     name.innerText = i.name;
+    temp.setAttribute("type", "checkbox");
+    temp.setAttribute("data-id", `input${i + 1}`);
+    temp.classList.add("output-box");
     output.append(name);
     output.append(temp);
     outputDiv.append(output);
   });
   body.append(outputDiv);
 };
+
 //sending operations from obj into div
 let createDivs = () => {
   operations = Array.from(inputGraph.operations);
-  //appends normal operations
   operations.forEach((o) => {
     const mainOperation = document.createElement("div");
     const name = document.createElement("div");
-    const inputOutputContainer = document.createElement("div"); // Fixed from createAttribute
+    const inputOutputContainer = document.createElement("div");
     const inputs = document.createElement("div");
     const outputs = document.createElement("div");
     let numInputs = o.inputs.length;
@@ -153,9 +187,9 @@ let createDivs = () => {
       relativeLeft: parseInt(o.position.x),
       relativeTop: parseInt(o.position.y),
     });
-    // Creates the required input elements
+
+    //creates the required input elements
     for (let i = 0; i < numInputs; i++) {
-      // Fixed loop condition
       const input = document.createElement("label");
       const name = document.createElement("div");
       const temp = document.createElement("input");
@@ -168,7 +202,6 @@ let createDivs = () => {
       inputs.append(input);
     }
     for (let i = 0; i < numOutputs; i++) {
-      // Fixed loop condition
       const output = document.createElement("label");
       const name = document.createElement("div");
       const temp = document.createElement("input");
@@ -188,7 +221,6 @@ let createDivs = () => {
     inputs.classList.add("inputs");
     outputs.classList.add("outputs");
 
-    //initial x and y positions before mouse click
     mainOperation.style.left = `${o.position.x}px`;
     mainOperation.style.top = `${o.position.y}px`;
 
@@ -206,28 +238,27 @@ let createDivs = () => {
   parseCheckBoxes();
   addConnections();
 };
+
 //adds events to new operations
 let initializeOperations = () => {
   active = true;
   tables = document.querySelectorAll(".draggable-table");
   tables.forEach((table, index) => {
     table.addEventListener("mousedown", (e) => {
-      isDraggingTable = table;
+      currentDraggingTable = table;
       startX = e.clientX - parseInt(window.getComputedStyle(table).left);
       startY = e.clientY - parseInt(window.getComputedStyle(table).top);
-
-      e.stopPropagation(); //idk, doesn't work without this
+      e.stopPropagation();
     });
-    //tables into objects and assigns starting relativeX and relativeY
     table.addEventListener("mouseup", () => {
-      if (isDraggingTable) {
+      if (currentDraggingTable) {
         const currentLeft = parseInt(window.getComputedStyle(table).left);
         const currentTop = parseInt(window.getComputedStyle(table).top);
 
         tablePositions[index].relativeLeft = currentLeft - bgPosX;
         tablePositions[index].relativeTop = currentTop - bgPosY;
 
-        isDraggingTable = null;
+        currentDraggingTable = null;
       }
     });
   });
@@ -237,7 +268,6 @@ let parseCheckBoxes = () => {
   checkBoxes = document.querySelectorAll(
     "input[type='checkbox'], output[type='checkbox']"
   );
-  //parses position of each parsed input/output of operations excluding input and output
   checkBoxes.forEach((checkbox) => {
     const rect = checkbox.getBoundingClientRect();
     if (
@@ -277,25 +307,34 @@ let drawLine = (x1, y1, x2, y2) => {
   line.setAttribute("stroke-width", "2");
   svgCanvas.appendChild(line);
 };
-// connection refers back to the link
-let drawCircle = (x, y, connection = undefined) => {
-  const color = "black"
-  const radius = 5;
-  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-  // connection data
-  circle.connection = connection;
-  circle.setAttribute("cx", x);
-  circle.setAttribute("cy", y);
-  circle.setAttribute("r", radius);
-  circle.setAttribute("fill", color);
-  svgCanvas.append(circle);
-}
+
+//connection refers back to the link
+let drawCircle = (x, y, linkIndex, controlPointIndex) => {
+  const circle = document.createElement("div");
+  circle.classList.add("circle");
+  circle.style.left = `${x}px`;
+  circle.style.top = `${y}px`;
+
+  circle.dataset.linkIndex = linkIndex;
+  circle.dataset.controlPointIndex = controlPointIndex;
+
+  circle.addEventListener("mousedown", (e) => {
+    currentDraggingCircle = circle;
+    startX = e.clientX - parseInt(circle.style.left);
+    startY = e.clientY - parseInt(circle.style.top);
+    e.stopPropagation();
+  });
+
+  body.append(circle);
+};
+
 //draws all lines based on checkBoxesPositions and link arrays
 let addConnections = () => {
   let posOne = [];
   let posTwo = [];
-  //grabs rels of links from original array and coords of new array
-  links.forEach((l) => {
+  svgCanvas.innerHTML = "";
+
+  links.forEach((l, linkIndex) => {
     let controlPoints = l.control_points;
     checkBoxesPositions.forEach((box) => {
       if (box.data === l.sink.data && box.operation === l.sink.operation) {
@@ -308,23 +347,28 @@ let addConnections = () => {
     if (!controlPoints?.length) {
       drawLine(posOne[0] + 5, posOne[1] + 7, posTwo[0] + 5, posTwo[1] + 7);
     } else {
-      controlPoints.forEach((point) => {
+      controlPoints.forEach((point, index) => {
         drawLine(posOne[0] + 5, posOne[1] + 7, point.x + 5, point.y + 7);
-        drawCircle(point.x + 5, point.y + 7, l)
+        drawCircle(point.x, point.y, linkIndex, index);
         posOne = [point.x, point.y];
       });
       drawLine(posOne[0] + 5, posOne[1] + 7, posTwo[0] + 5, posTwo[1] + 7);
     }
   });
 };
-//refreshs lines
+
+//refresh lines and points
 let refresh = () => {
   svgCanvas.innerHTML = "";
+  document.querySelectorAll(".circle").forEach((e) => e.remove());
   parseCheckBoxes();
   addConnections();
 };
+
 let resetFunction = () => {
   document.querySelectorAll(".draggable-table").forEach((e) => e.remove());
+  document.querySelectorAll(".circle").forEach((e) => e.remove());
+
   document.querySelector(".inputTable").remove();
   document.querySelector(".outputTable").remove();
 
@@ -346,4 +390,3 @@ document.getElementById("organize").addEventListener("click", () => {
   createDivs();
   refresh();
 });
-
